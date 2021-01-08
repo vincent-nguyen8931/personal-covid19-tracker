@@ -23,8 +23,8 @@ QueryURL2 = "https://maps.googleapis.com/maps/api/directions/json?origin=Lafayet
 $.ajax({
   url: QueryURL2,
   method: "GET",
-  dateType: "jsop" 
 }).then(function (currentDay) {
+  currentDay.addHeader("Access-Control-Allow-Origin", "*");
   console.log(currentDay);
 });
 
