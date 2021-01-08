@@ -23,7 +23,7 @@ QueryURL2 = "https://maps.googleapis.com/maps/api/directions/json?origin=Lafayet
 $.ajax({
   url: QueryURL2,
   method: "GET",
-  cors: true
+  dateType: "jsop" 
 }).then(function (currentDay) {
   console.log(currentDay);
 });
