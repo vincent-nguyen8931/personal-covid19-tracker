@@ -1,38 +1,105 @@
+$(document).ready(function () {
 
 
-// geolocte api 
-//  grab location
-// grab covid guidelines of the state
-// testing locations
-// choosing testing locatioin
-// be provided directions for testing location
-QueryURL = "https://discover.search.hereapi.com/v1/discover?apikey=cm9nka7Eq7NC7YfrsKwehxVumUyYYWiARjJBuXRa484&q=Covid&at=30.22,-92.02&limit=3"
 
-$.ajax({
-  url: QueryURL,
-  method: "GET"
-}).then(function (currentDay) {
-  console.log(currentDay);
-});
+  // geolocte api 
+  //  grab location
+  // grab covid guidelines of the state
+  // testing locations
+  // choosing testing locatioin
+  // be provided directions for testing location
+  // QueryURL = "https://discover.search.hereapi.com/v1/discover?apikey=cm9nka7Eq7NC7YfrsKwehxVumUyYYWiARjJBuXRa484&q=Covid&at=30.22,-92.02&limit=3"
 
-// on click
-// this.val(items[i])
+  // $.ajax({
+  //   url: QueryURL,
+  //   method: "GET"
+  // }).then(function (currentDay) {
+  //   console.log(currentDay);
+  // });
 
-QueryURL2 = "https://maps.googleapis.com/maps/api/directions/json?origin=Lafayette&destination=NewOrleans&units=imperial&key=AIzaSyDs01d715oubUTbz2ZrZSYWVH-k7N9n9xI"
+  // // on click
+  // // this.val(items[i])
 
-$.ajax({
-  url: QueryURL2,
-  method: "GET",
-}).then(function (currentDay) {
-  currentDay.addHeader("Access-Control-Allow-Origin", "*");
-  console.log(currentDay);
-});
 
-Queryurl3 = "https://api.smartable.ai/coronavirus/news/:CA"
+  // // QueryURL2 = "https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/findplacefromtext/jsonp?origin=Lafayette&units=imperial&key=AIzaSyDs01d715oubUTbz2ZrZSYWVH-k7N9n9xI"
 
-$.ajax({
-  url: Queryurl3,
-  method: "GET"
-}).then(function (currentDay) {
-  console.log(currentDay);
-});
+
+  // // places google
+  // // QueryURL2 = "https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=1500&type=restaurant&keyword=cruise&key=AIzaSyDs01d715oubUTbz2ZrZSYWVH-k7N9n9xI"
+
+  // // covid data by country/state
+  // QueryURL2 = "https://coronavirus-smartable.p.rapidapi.com/stats/v1/US/?rapidapi-key=60cc0bce2emsh9ba3c88eb3c4d5dp125545jsnc79365a8f484"
+
+  // $.ajax({
+  //   url: QueryURL2,
+  //   method: "GET"
+  // }).then(function (currentDay) {
+
+  //   console.log(currentDay);
+  // });
+  let map;
+
+  function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: { lat: 41.5, lng: -100 },
+      zoom: 4
+    });
+  }
+
+  initMap();
+
+  var provinceOrState = $("<div>")
+  var totalConfirmedCases = $("<div>")
+  var totalDeaths = $("<div>")
+  var totalRecoveredCases = $("<div>")
+
+  $("#search-button").click(function (event) {
+    event.preventDefault()
+    Queryurl3 = "https://coronavirus-smartable.p.rapidapi.com/stats/v1/US/?rapidapi-key=60cc0bce2emsh9ba3c88eb3c4d5dp125545jsnc79365a8f484"
+    $.ajax({
+      url: Queryurl3,
+      method: "GET"
+    }).then(function (covidInfo) {
+      console.log(covidInfo);
+
+      // *needs fixing* //
+      // button here
+      var covidInfoBox = $("#covid-info")
+      $("#search-button").click(function () {
+
+        var searchTerm = $("#findState").val()
+        var arrayLength = covidInfo.stats.breakdowns.length
+
+        for (i = 0; i < arrayLength; i++) {
+          var state = covidInfo.stats.breakdowns[i].location.provinceOrState
+          if (searchTerm === state) {
+            // pull information from api call and fill in relevant fields.
+            provinceOrState.text(covidInfo.stats.breakdowns[i].location.provinceOrState);
+            totalConfirmedCases.text(covidInfo.stats.breakdowns[i].totalConfirmedCases);
+            totalDeaths.text(covidInfo.stats.breakdowns[i].totalDeaths);
+            totalRecoveredCases.text(covidInfo.stats.breakdowns[i].totalRecoveredCases);
+
+            covidInfoBox.append(provinceOrState, totalConfirmedCases, totalDeaths, totalRecoveredCases);
+          }
+        }
+      })
+    })
+  })
+  
+ // hamburger menu toggle variables
+ var navbarToggle = $("#nav-toggle")
+ var toggle = 0;
+ // hamburger menu toggle
+ $("#nav-toggle").click(function () {
+   if (toggle === 0) {
+     navbarToggle.attr("class", ".is-active");
+     toggle++;
+   }
+   else {
+     navbarToggle.removeAttr("class", ".is-active");
+     toggle--;
+   }
+
+ })
+
+}) // document ready closing brackets
